@@ -1,0 +1,20 @@
+{
+  "name": "untek-utility/init",
+  "type": "extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Zn Developer",
+      "email": "zndev@ya.ru"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Untek\\Utility\\Init\\": "src",
+      "Untek\\Utility\\Init\\Tests\\": "tests"
+    }
+  }
+}
