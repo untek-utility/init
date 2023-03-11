@@ -1,6 +1,6 @@
 <?php
 
-namespace Untek\Utility\Init\Presentation\Cli\Libs;
+namespace Untek\Utility\Init\Presentation\Libs;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputInterface;

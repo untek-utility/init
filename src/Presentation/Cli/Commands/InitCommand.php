@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Untek\Core\Container\Traits\ContainerAwareAttributeTrait;
-use Untek\Utility\Init\Presentation\Cli\Libs\Init;
+use Untek\Utility\Init\Presentation\Libs\Init;
 
 class InitCommand extends Command
 {
