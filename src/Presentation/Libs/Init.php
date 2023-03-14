@@ -53,7 +53,7 @@ class Init
         $envName = $this->userInput();
         $this->output->write("\n  Start initialization ...\n\n");
 
-        $root = realpath(__DIR__ . '/../../../../../../../../../');
+        $root = realpath(__DIR__ . '/../../../../../..');
         $this->runTaskList($root, $envName);
 
         $this->output->write("\n  ... initialization completed.\n\n");
