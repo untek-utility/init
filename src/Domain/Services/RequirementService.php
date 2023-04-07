@@ -3,7 +3,7 @@
 namespace Untek\Utility\Init\Domain\Services;
 
 use YiiRequirementChecker;
-use Untek\Domain\Service\Base\BaseService;
+use Untek\Model\Service\Base\BaseService;
 use Untek\Utility\Init\Domain\Helpers\RequirementHelper;
 use Untek\Utility\Init\Domain\Interfaces\Repositories\RequirementRepositoryInterface;
 use Untek\Utility\Init\Domain\Interfaces\Services\RequirementServiceInterface;
