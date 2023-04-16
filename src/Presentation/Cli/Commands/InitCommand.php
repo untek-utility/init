@@ -33,12 +33,20 @@ class InitCommand extends Command
             '',
             false
         );
+        $this->addOption(
+            'profile',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            '',
+            null
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $isOverwrite = $input->getOption('overwrite');
-        
+        $profile = $input->getOption('profile');
+
 //        \Untek\Core\DotEnv\Domain\Libs\DotEnv::init();
         $defaultDefinitions = [
             'copyFiles' => 'Untek\Utility\Init\Presentation\Cli\Tasks\CopyFilesTask',
@@ -73,6 +81,9 @@ class InitCommand extends Command
 //        $output = new ConsoleOutput;
 //        $container = new \Untek\Core\Container\Libs\Container();
         $initLib = new Init($this->getContainer(), $input, $output, $config['environments'], $config['definitions']);
+        if($profile) {
+            $initLib->setProfile($profile);
+        }
         $initLib->run();
 
         return Command::SUCCESS;
