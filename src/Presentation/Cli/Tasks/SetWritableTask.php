@@ -5,11 +5,15 @@ namespace Untek\Utility\Init\Presentation\Cli\Tasks;
 class SetWritableTask extends BaseTask
 {
 
-    public function run(array $paths)
+    public function __construct(private string $rootDir, private array $paths)
     {
-        foreach ($paths as $writable) {
-            if (is_dir("{$this->root}/$writable")) {
-                if (@chmod("{$this->root}/$writable", 0777)) {
+    }
+
+    public function run()
+    {
+        foreach ($this->paths as $writable) {
+            if (is_dir("{$this->rootDir}/$writable")) {
+                if (@chmod("{$this->rootDir}/$writable", 0777)) {
                     $this->output->write("      chmod 0777 $writable\n");
                 } else {
                     $this->output->write("<error>Operation chmod not permitted for directory $writable.</error>");

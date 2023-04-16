@@ -7,22 +7,31 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class BaseTask
 {
-
     protected $input;
-    protected $output;
-    protected $root;
-    protected $env;
-    protected $params;
 
-    public function __construct(InputInterface $input, OutputInterface $output, string $root, array $env, array $params)
+    protected $output;
+
+//    protected $env;
+
+    protected array $params = [];
+
+    protected string $sourcePath;
+
+    abstract public function run();
+
+    public function setParam(string $name, mixed $value) {
+        $this->params[$name] = $value;
+    }
+
+    public function setParams(array $params) {
+        $this->params = $this->params + $params;
+    }
+
+    public function setConfigs(InputInterface $input, OutputInterface $output, string $sourcePath)
     {
         $this->input = $input;
         $this->output = $output;
-        $this->root = $root;
-        $this->env = $env;
-        $this->params = $params;
+//        $this->env = $env;
+        $this->sourcePath = $sourcePath;
     }
-
-    abstract public function run(array $links);
-
 }

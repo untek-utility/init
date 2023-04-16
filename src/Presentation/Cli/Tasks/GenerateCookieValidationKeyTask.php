@@ -6,12 +6,15 @@ use Untek\Core\Text\Libs\RandomString;
 
 class GenerateCookieValidationKeyTask extends BaseTask
 {
-
-    public function run(array $paths)
+    public function __construct(private string $rootDir, private array $paths)
     {
-        foreach ($paths as $file) {
+    }
+
+    public function run()
+    {
+        foreach ($this->paths as $file) {
             $this->output->write("   generate cookie validation key in $file\n");
-            $file = $this->root . '/' . $file;
+            $file = $this->rootDir . '/' . $file;
 
             $content = file_get_contents($file);
 

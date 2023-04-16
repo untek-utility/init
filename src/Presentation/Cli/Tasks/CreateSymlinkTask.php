@@ -4,20 +4,23 @@ namespace Untek\Utility\Init\Presentation\Cli\Tasks;
 
 class CreateSymlinkTask extends BaseTask
 {
-
-    public function run(array $links)
+    public function __construct(private string $rootDir, private array $paths)
     {
-        foreach ($links as $link => $target) {
+    }
+
+    public function run()
+    {
+        foreach ($this->paths as $link => $target) {
             //first removing folders to avoid errors if the folder already exists
-            @rmdir($this->root . "/" . $link);
+            @rmdir($this->rootDir . "/" . $link);
             //next removing existing symlink in order to update the target
-            if (is_link($this->root . "/" . $link)) {
-                @unlink($this->root . "/" . $link);
+            if (is_link($this->rootDir . "/" . $link)) {
+                @unlink($this->rootDir . "/" . $link);
             }
-            if (@symlink($this->root . "/" . $target, $this->root . "/" . $link)) {
-                $this->output->write("      symlink {$this->root}/$target {$this->root}/$link\n");
+            if (@symlink($this->rootDir . "/" . $target, $this->rootDir . "/" . $link)) {
+                $this->output->write("      symlink {$this->rootDir}/$target {$this->rootDir}/$link\n");
             } else {
-                $this->output->write("<error>Cannot create symlink {$this->root}/$target {$this->root}/$link.</error>");
+                $this->output->write("<error>Cannot create symlink {$this->rootDir}/$target {$this->rootDir}/$link.</error>");
             }
         }
     }

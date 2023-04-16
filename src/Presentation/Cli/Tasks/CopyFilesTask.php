@@ -7,26 +7,30 @@ use Untek\Framework\Console\Symfony4\Helpers\InputHelper;
 class CopyFilesTask extends BaseTask
 {
 
-    public function run(array $links)
+    public function __construct(private string $rootDir, private array $skipFiles = [])
     {
-        $rootPath = $this->env['path'];
-        if (!is_dir($rootPath)) {
-            $this->output->write("<error>$rootPath directory \"$rootPath\" does not exist.</error>");
+    }
+
+    public function run()
+    {
+        $sourcePath = $this->params['sourcePath'];
+        if (!is_dir($sourcePath)) {
+            $this->output->write("<error>$sourcePath directory \"$sourcePath\" does not exist.</error>");
             exit(3);
         }
 
-        $files = $this->getFileList($rootPath);
+        $files = $this->getFileList($sourcePath);
 
-        if (isset($this->env['skipFiles'])) {
-            $skipFiles = $this->env['skipFiles'];
+        if (isset($this->skipFiles)) {
+            $skipFiles = $this->skipFiles;
             array_walk($skipFiles, function (&$value) {
-                $value = "{$this->root}/$value";
+                $value = "{$this->rootDir}/$value";
             });
-            $files = array_diff($files, array_intersect_key($this->env['skipFiles'], array_filter($skipFiles, 'file_exists')));
+            $files = array_diff($files, array_intersect_key($skipFiles, array_filter($skipFiles, 'file_exists')));
         }
         $all = false;
         foreach ($files as $file) {
-            if (!$this->copyFile($this->root, "{$this->env['path']}/$file", $file, $all)) {
+            if (!$this->copyFile($this->rootDir, "$sourcePath/$file", $file, $all)) {
                 break;
             }
         }
@@ -52,14 +56,14 @@ class CopyFilesTask extends BaseTask
         return $files;
     }
 
-    private function copyFile($root, $source, $target, &$all)
+    private function copyFile($rootDir, $source, $target, &$all)
     {
         if (!is_file($source)) {
             $this->output->write("       skip $target ($source not exist)\n");
             return true;
         }
-        if (is_file($root . '/' . $target)) {
-            if (file_get_contents($source) === file_get_contents($root . '/' . $target)) {
+        if (is_file($rootDir . '/' . $target)) {
+            if (file_get_contents($source) === file_get_contents($rootDir . '/' . $target)) {
                 $this->output->write("  unchanged $target\n");
                 return true;
             }
@@ -67,31 +71,28 @@ class CopyFilesTask extends BaseTask
                 $this->output->write("  overwrite $target\n");
             } else {
                 $this->output->write("      exist $target\n");
-                $questionText = '            ...overwrite? [Yes|No|All|Quit] ';
-                $answer = $this->params['overwrite'] ?? InputHelper::question($this->input, $this->output, $questionText);
+                $questionText = '            ...overwrite? [Yes|No|All] ';
+//                dd($this->params);
+                $answer = !empty($this->params['overwrite']) ? 'y' : InputHelper::question($this->input, $this->output, $questionText);
 
-                if (!strncasecmp($answer, 'q', 1)) {
-                    return false;
+                if (!strncasecmp($answer, 'y', 1)) {
+                    $this->output->write("  overwrite $target\n");
                 } else {
-                    if (!strncasecmp($answer, 'y', 1)) {
+                    if (!strncasecmp($answer, 'a', 1)) {
                         $this->output->write("  overwrite $target\n");
+                        $all = true;
                     } else {
-                        if (!strncasecmp($answer, 'a', 1)) {
-                            $this->output->write("  overwrite $target\n");
-                            $all = true;
-                        } else {
-                            $this->output->write("       skip $target\n");
-                            return true;
-                        }
+                        $this->output->write("       skip $target\n");
+                        return true;
                     }
                 }
             }
-            file_put_contents($root . '/' . $target, file_get_contents($source));
+            file_put_contents($rootDir . '/' . $target, file_get_contents($source));
             return true;
         }
         $this->output->write("   generate $target\n");
-        @mkdir(dirname($root . '/' . $target), 0777, true);
-        file_put_contents($root . '/' . $target, file_get_contents($source));
+        @mkdir(dirname($rootDir . '/' . $target), 0777, true);
+        file_put_contents($rootDir . '/' . $target, file_get_contents($source));
         return true;
     }
 }
