@@ -2,6 +2,10 @@
 
 namespace Untek\Utility\Init\Presentation\Cli\Tasks;
 
+use Untek\Core\Code\Helpers\DeprecateHelper;
+
+DeprecateHelper::hardThrow();
+
 class SetWritableTask extends BaseTask
 {
 
@@ -14,7 +18,7 @@ class SetWritableTask extends BaseTask
         foreach ($this->paths as $writable) {
             if (is_dir("{$this->rootDir}/$writable")) {
                 if (@chmod("{$this->rootDir}/$writable", 0777)) {
-                    $this->output->write("      chmod 0777 $writable\n");
+                    $this->output->write("   chmod 0777 $writable\n");
                 } else {
                     $this->output->write("<error>Operation chmod not permitted for directory $writable.</error>");
                 }

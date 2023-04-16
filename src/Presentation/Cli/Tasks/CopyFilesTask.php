@@ -7,13 +7,13 @@ use Untek\Framework\Console\Symfony4\Helpers\InputHelper;
 class CopyFilesTask extends BaseTask
 {
 
-    public function __construct(private string $rootDir, private array $skipFiles = [])
+    public function __construct(private string $rootDir, private string $sourceDir, private array $skipFiles = [])
     {
     }
 
     public function run()
     {
-        $sourcePath = $this->params['sourcePath'];
+        $sourcePath = $this->sourceDir;
         if (!is_dir($sourcePath)) {
             $this->output->write("<error>$sourcePath directory \"$sourcePath\" does not exist.</error>");
             exit(3);
@@ -90,7 +90,7 @@ class CopyFilesTask extends BaseTask
             file_put_contents($rootDir . '/' . $target, file_get_contents($source));
             return true;
         }
-        $this->output->write("   generate $target\n");
+        $this->output->write("   copy $target\n");
         @mkdir(dirname($rootDir . '/' . $target), 0777, true);
         file_put_contents($rootDir . '/' . $target, file_get_contents($source));
         return true;
