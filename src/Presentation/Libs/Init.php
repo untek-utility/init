@@ -30,7 +30,6 @@ class Init
             die('The OpenSSL PHP extension is required.');
         }
         $profileConfig = $this->profileConfig;
-        dd();
         foreach ($this->profileConfig['definitions'] as $taskInstance) {
             /** @var BaseTask $taskInstance */
             $taskInstance->setConfigs($this->input, $this->output);
