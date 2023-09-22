@@ -7,9 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Untek\Core\Container\Traits\ContainerAwareAttributeTrait;
 use Untek\Core\Text\Libs\TemplateRender;
+use Untek\Framework\Console\Symfony4\Question\ChoiceQuestion;
 use Untek\Framework\Console\Symfony4\Traits\IOTrait;
 use Untek\Utility\Init\Presentation\Libs\Init;
 
@@ -85,10 +85,8 @@ class InitCommand extends Command
 
     private function userInput($profiles)
     {
-        $keys = array_keys($profiles);
-        $answer = $this->selectEnv($profiles);
-        $envName = $keys[$answer] ?? null;
-        if ($envName == null) {
+        $envName = $this->selectEnv($profiles);
+        if ($envName === null) {
             $this->output->write("\n  Quit initialization.\n");
             exit(Command::SUCCESS);
         }
@@ -99,15 +97,13 @@ class InitCommand extends Command
 
     private function selectEnv($profiles): ?string
     {
-        $envName = null;
         $envNames = array_keys($profiles);
-        $this->output->write("Which environment do you want the application to be initialized in?\n\n");
-        foreach ($envNames as $i => $name) {
-            $this->output->write("  [$i] $name\n");
-        }
-        $questionText = "  Your choice [0-" . (count($profiles) - 1) . ', or "q" to quit] ';
-        $answer = $this->getStyle()->askQuestion(new Question($questionText));
-        return $answer;
+        $question = new ChoiceQuestion(
+            'Which environment do you want the application to be initialized in?',
+            $envNames,
+            0
+        );
+        return $this->getStyle()->askQuestion($question);
     }
 
     private function userConfirm(string $envName)
