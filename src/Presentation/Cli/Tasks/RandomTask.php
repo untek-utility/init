@@ -23,7 +23,7 @@ class RandomTask extends BaseTask
         $this->output->write("   generate random value for \"$this->placeHolder\" in file \"$this->path\"\n");
         $file = $this->rootDir . '/' . $this->path;
         $content = file_get_contents($file);
-        $content = $this->generateRandomKeysInEnvConfig($content);
+        $content = $this->generateRandomValue($content);
         file_put_contents($file, $content);
     }
 
