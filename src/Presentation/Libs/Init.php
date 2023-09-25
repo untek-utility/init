@@ -18,7 +18,8 @@ class Init
         InputInterface $input,
         OutputInterface $output,
         array $profileConfig,
-    ) {
+    )
+    {
         $this->profileConfig = $profileConfig;
         $this->input = $input;
         $this->output = $output;
@@ -26,11 +27,8 @@ class Init
 
     public function run()
     {
-        if (!extension_loaded('openssl')) {
-            die('The OpenSSL PHP extension is required.');
-        }
         $profileConfig = $this->profileConfig;
-        foreach ($this->profileConfig['definitions'] as $taskInstance) {
+        foreach ($this->profileConfig['tasks'] as $taskInstance) {
             /** @var BaseTask $taskInstance */
             $taskInstance->setConfigs($this->input, $this->output);
             $taskInstance->setParams($profileConfig);

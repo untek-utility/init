@@ -7,20 +7,20 @@ use Untek\Core\Text\Libs\RandomString;
 class RandomTask extends BaseTask
 {
 
-    public int $length = 64;
-    public string $quote = '"';
-    public array $quoteChars = [
-        '"',
-        '$',
-    ];
-
-    public function __construct(private string $rootDir, private string $path, private string $placeHolder)
+    public function __construct(
+        private string $rootDir,
+        private string $path,
+        private string $placeHolder,
+        private int $length = 64,
+        private string $quote = '"',
+        private array $quoteChars = ['"', '$']
+    )
     {
     }
 
     public function run()
     {
-        $this->output->write("   generate cookie validation key in \"$this->path\"\n");
+        $this->output->write("   generate random value for \"$this->placeHolder\" in file \"$this->path\"\n");
         $file = $this->rootDir . '/' . $this->path;
         $content = file_get_contents($file);
         $content = $this->generateRandomKeysInEnvConfig($content);
@@ -31,7 +31,7 @@ class RandomTask extends BaseTask
      * @param $content
      * @return mixed
      */
-    function generateRandomKeysInEnvConfig($content)
+    function generateRandomValue($content)
     {
         $key = RandomString::generateNumLowerUpper($this->length);
         if ($this->quoteChars) {
