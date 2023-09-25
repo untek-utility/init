@@ -15,15 +15,16 @@ class SetWritableTask extends BaseTask
 
     public function run()
     {
-        foreach ($this->paths as $writable) {
-            if (is_dir("{$this->rootDir}/$writable")) {
-                if (@chmod("{$this->rootDir}/$writable", 0777)) {
-                    $this->output->write("   chmod 0777 $writable\n");
+        foreach ($this->paths as $path) {
+            $fullPath = $this->rootDir . '/' . $path;
+            if (is_dir($fullPath)) {
+                if (@chmod($fullPath, 0777)) {
+                    $this->output->write("   chmod 0777 \"$path\"\n");
                 } else {
-                    $this->output->write("<error>Operation chmod not permitted for directory $writable.</error>");
+                    $this->output->write("<error>Operation chmod not permitted for directory \"$path\".</error>");
                 }
             } else {
-                $this->output->write("<error>Directory $writable does not exist.</error>");
+                $this->output->write("<error>Directory \"$path\" does not exist.</error>");
             }
         }
     }

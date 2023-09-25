@@ -7,6 +7,8 @@ use Untek\Framework\Console\Symfony4\Helpers\InputHelper;
 class CopyFilesTask extends BaseTask
 {
 
+    private $all = false;
+
     public function __construct(private string $rootDir, private string $sourceDir, private array $skipFiles = [])
     {
     }
@@ -15,7 +17,7 @@ class CopyFilesTask extends BaseTask
     {
         $sourcePath = $this->sourceDir;
         if (!is_dir($sourcePath)) {
-            $this->output->write("<error>$sourcePath directory \"$sourcePath\" does not exist.</error>");
+            $this->output->write("<error>Directory \"$sourcePath\" does not exist.</error>");
             exit(3);
         }
 
@@ -28,9 +30,8 @@ class CopyFilesTask extends BaseTask
             });
             $files = array_diff($files, array_intersect_key($skipFiles, array_filter($skipFiles, 'file_exists')));
         }
-        $all = false;
         foreach ($files as $file) {
-            if (!$this->copyFile($this->rootDir, "$sourcePath/$file", $file, $all)) {
+            if (!$this->copyFile($this->rootDir, "$sourcePath/$file", $file)) {
                 break;
             }
         }
@@ -56,41 +57,41 @@ class CopyFilesTask extends BaseTask
         return $files;
     }
 
-    private function copyFile($rootDir, $source, $target, &$all)
+    private function copyFile($rootDir, $source, $target)
     {
         if (!is_file($source)) {
-            $this->output->write("       skip $target ($source not exist)\n");
+            $this->output->write("       skip \"$target\" (\"$source\" not exist)\n");
             return true;
         }
-        if (is_file($rootDir . '/' . $target)) {
-            if (file_get_contents($source) === file_get_contents($rootDir . '/' . $target)) {
-                $this->output->write("  unchanged $target\n");
+        $targetPath = $rootDir . '/' . $target;
+        if (is_file($targetPath)) {
+            if (file_get_contents($source) === file_get_contents($targetPath)) {
+                $this->output->write("  unchanged \"$target\"\n");
                 return true;
             }
-            if ($all) {
-                $this->output->write("  overwrite $target\n");
+            if ($this->all) {
+                $this->output->write("  overwrite \"$target\"\n");
             } else {
-                $this->output->write("      exist $target\n");
+                $this->output->write("      exist \"$target\"\n");
                 $questionText = '            ...overwrite? [Yes|No|All] ';
-//                dd($this->params);
                 $answer = !empty($this->params['overwrite']) ? 'y' : InputHelper::question($this->input, $this->output, $questionText);
 
                 if (!strncasecmp($answer, 'y', 1)) {
-                    $this->output->write("  overwrite $target\n");
+                    $this->output->write("  overwrite \"$target\"\n");
                 } else {
                     if (!strncasecmp($answer, 'a', 1)) {
-                        $this->output->write("  overwrite $target\n");
-                        $all = true;
+                        $this->output->write("  overwrite \"$target\"\n");
+                        $this->all = true;
                     } else {
-                        $this->output->write("       skip $target\n");
+                        $this->output->write("       skip \"$target\"\n");
                         return true;
                     }
                 }
             }
-            file_put_contents($rootDir . '/' . $target, file_get_contents($source));
+            file_put_contents($targetPath, file_get_contents($source));
             return true;
         }
-        $this->output->write("   copy $target\n");
+        $this->output->write("   copy \"$target\"\n");
         @mkdir(dirname($rootDir . '/' . $target), 0777, true);
         file_put_contents($rootDir . '/' . $target, file_get_contents($source));
         return true;

@@ -11,18 +11,21 @@ class CreateSymlinkTask extends BaseTask
     public function run()
     {
         foreach ($this->paths as $link => $target) {
+
+            $linkFileName = $this->rootDir . "/" . $link;
+            $targetFileName = $this->rootDir . "/" . $target;
+
             //first removing folders to avoid errors if the folder already exists
-            @rmdir($this->rootDir . "/" . $link);
+            @rmdir($linkFileName);
             //next removing existing symlink in order to update the target
-            if (is_link($this->rootDir . "/" . $link)) {
-                @unlink($this->rootDir . "/" . $link);
+            if (is_link($linkFileName)) {
+                @unlink($linkFileName);
             }
-            if (@symlink($this->rootDir . "/" . $target, $this->rootDir . "/" . $link)) {
-                $this->output->write("      symlink {$this->rootDir}/$target {$this->rootDir}/$link\n");
+            if (@symlink($targetFileName, $linkFileName)) {
+                $this->output->write("      symlink \"$targetFileName\" \"$linkFileName\"\n");
             } else {
-                $this->output->write("<error>Cannot create symlink {$this->rootDir}/$target {$this->rootDir}/$link.</error>");
+                $this->output->write("<error>Cannot create symlink \"$targetFileName\" \"$linkFileName\".</error>");
             }
         }
     }
-
 }

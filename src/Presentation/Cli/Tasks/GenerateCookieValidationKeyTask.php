@@ -12,11 +12,12 @@ class GenerateCookieValidationKeyTask extends BaseTask
 
     public function run()
     {
-        foreach ($this->paths as $file) {
-            $this->output->write("   generate cookie validation key in $file\n");
-            $file = $this->rootDir . '/' . $file;
+        foreach ($this->paths as $path) {
+            $fullPath = $this->rootDir . '/' . $path;
 
-            $content = file_get_contents($file);
+            $this->output->write("   generate cookie validation key in \"$path\"\n");
+
+            $content = file_get_contents($fullPath);
 
             $apps = [
                 'COOKIE_VALIDATION_KEY_WEB',
@@ -25,7 +26,7 @@ class GenerateCookieValidationKeyTask extends BaseTask
             ];
             $content = $this->generateRandomKeysInEnvConfig($content, $apps);
 
-            file_put_contents($file, $content);
+            file_put_contents($fullPath, $content);
         }
     }
 

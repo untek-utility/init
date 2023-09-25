@@ -14,19 +14,17 @@ class RandomTask extends BaseTask
         '$',
     ];
 
-    public function __construct(private string $rootDir, private array $paths, private array $placeHolders)
+    public function __construct(private string $rootDir, private string $path, private string $placeHolder)
     {
     }
 
     public function run()
     {
-        foreach ($this->paths as $file) {
-            $this->output->write("   generate cookie validation key in $file\n");
-            $file = $this->rootDir . '/' . $file;
-            $content = file_get_contents($file);
-            $content = $this->generateRandomKeysInEnvConfig($content);
-            file_put_contents($file, $content);
-        }
+        $this->output->write("   generate cookie validation key in \"$this->path\"\n");
+        $file = $this->rootDir . '/' . $this->path;
+        $content = file_get_contents($file);
+        $content = $this->generateRandomKeysInEnvConfig($content);
+        file_put_contents($file, $content);
     }
 
     /**
@@ -35,15 +33,13 @@ class RandomTask extends BaseTask
      */
     function generateRandomKeysInEnvConfig($content)
     {
-        foreach ($this->placeHolders as $placeHolder) {
-            $key = RandomString::generateNumLowerUpper($this->length);
-            if ($this->quoteChars) {
-                foreach ($this->quoteChars as $char) {
-                    $key = str_replace($char, '\\' . $char, $key);
-                }
+        $key = RandomString::generateNumLowerUpper($this->length);
+        if ($this->quoteChars) {
+            foreach ($this->quoteChars as $char) {
+                $key = str_replace($char, '\\' . $char, $key);
             }
-            $content = str_replace('{' . $placeHolder . '}', $key, $content);
         }
+        $content = str_replace('{' . $this->placeHolder . '}', $key, $content);
         return $content;
     }
 }
