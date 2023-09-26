@@ -18,9 +18,9 @@ class RandomTask extends BaseTask
     {
     }
 
-    public function run()
+    public function run(): void
     {
-        $this->output->write("   generate random value for \"$this->placeHolder\" in file \"$this->path\"\n");
+        $this->io->write("   generate random value for \"$this->placeHolder\" in file \"$this->path\"\n");
         $file = $this->rootDir . '/' . $this->path;
         $content = file_get_contents($file);
         $content = $this->generateRandomValue($content);
@@ -31,7 +31,7 @@ class RandomTask extends BaseTask
      * @param $content
      * @return mixed
      */
-    function generateRandomValue($content)
+    function generateRandomValue(string $content): string
     {
         $key = RandomString::generateNumLowerUpper($this->length);
         if ($this->quoteChars) {

@@ -13,7 +13,7 @@ class ChmodTask extends BaseTask
     {
     }
 
-    public function run()
+    public function run(): void
     {
         $tergetPath = "{$this->rootDir}/{$this->path}";
         if (file_exists($tergetPath)) {
@@ -25,12 +25,12 @@ class ChmodTask extends BaseTask
                 throw new NotSupportedException('Not supported permissions!');
             }
             if ($res) {
-                $this->output->write("   chmod $this->permissions \"$this->path\"\n");
+                $this->io->write("   chmod $this->permissions \"$this->path\"\n");
             } else {
-                $this->output->write("<error>Operation chmod not permitted for \"$this->path\".</error>");
+                $this->io->write("<error>Operation chmod not permitted for \"$this->path\".</error>");
             }
         } else {
-            $this->output->write("<error>\"$this->path\" does not exist.</error>");
+            $this->io->write("<error>\"$this->path\" does not exist.</error>");
         }
     }
 }

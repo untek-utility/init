@@ -2,18 +2,16 @@
 
 namespace Untek\Utility\Init\Presentation\Cli\Tasks;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\StyleInterface;
 
 abstract class BaseTask
 {
-    protected $input;
 
-    protected $output;
+    protected StyleInterface $io;
 
     protected array $params = [];
 
-    abstract public function run();
+    abstract public function run(): void;
 
     public function setParam(string $name, mixed $value)
     {
@@ -25,9 +23,8 @@ abstract class BaseTask
         $this->params = $this->params + $params;
     }
 
-    public function setConfigs(InputInterface $input, OutputInterface $output)
+    public function setIo(StyleInterface $io): void
     {
-        $this->input = $input;
-        $this->output = $output;
+        $this->io = $io;
     }
 }

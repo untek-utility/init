@@ -8,7 +8,7 @@ class CreateSymlinkTask extends BaseTask
     {
     }
 
-    public function run()
+    public function run(): void
     {
         foreach ($this->paths as $link => $target) {
 
@@ -22,9 +22,9 @@ class CreateSymlinkTask extends BaseTask
                 @unlink($linkFileName);
             }
             if (@symlink($targetFileName, $linkFileName)) {
-                $this->output->write("      symlink \"$targetFileName\" \"$linkFileName\"\n");
+                $this->io->write("      symlink \"$targetFileName\" \"$linkFileName\"\n");
             } else {
-                $this->output->write("<error>Cannot create symlink \"$targetFileName\" \"$linkFileName\".</error>");
+                $this->io->write("<error>Cannot create symlink \"$targetFileName\" \"$linkFileName\".</error>");
             }
         }
     }

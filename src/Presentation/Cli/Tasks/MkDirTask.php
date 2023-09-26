@@ -13,7 +13,7 @@ class MkDirTask extends BaseTask
     {
     }
 
-    public function run()
+    public function run(): void
     {
         $fullPath = $this->rootDir . '/' . $this->path;
         if (!is_dir($fullPath)) {
@@ -26,12 +26,12 @@ class MkDirTask extends BaseTask
                 throw new NotSupportedException('Not supported permissions!');
             }
             if ($res) {
-                $this->output->write("   mkdir {$this->permissions} \"$this->path\" \n");
+                $this->io->write("   mkdir {$this->permissions} \"$this->path\" \n");
             } else {
-                $this->output->write("<error>Operation chmod not permitted for \"$this->path\".</error>");
+                $this->io->write("<error>Operation chmod not permitted for \"$this->path\".</error>");
             }
         } else {
-            $this->output->write("<info>Directory \"$this->path\" already exist.</info> \n");
+            $this->io->write("<info>Directory \"$this->path\" already exist.</info> \n");
         }
     }
 }

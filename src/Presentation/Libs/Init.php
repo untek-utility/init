@@ -4,25 +4,23 @@ namespace Untek\Utility\Init\Presentation\Libs;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\StyleInterface;
 use Untek\Utility\Init\Presentation\Cli\Tasks\BaseTask;
 
 class Init
 {
-    private InputInterface $input;
-
-    private OutputInterface $output;
+    
+    private StyleInterface $io;
 
     private array $profileConfig;
 
     public function __construct(
-        InputInterface $input,
-        OutputInterface $output,
+        StyleInterface $io,
         array $profileConfig,
     )
     {
         $this->profileConfig = $profileConfig;
-        $this->input = $input;
-        $this->output = $output;
+        $this->io = $io;
     }
 
     public function run()
@@ -30,8 +28,8 @@ class Init
         $profileConfig = $this->profileConfig;
         foreach ($this->profileConfig['tasks'] as $taskInstance) {
             /** @var BaseTask $taskInstance */
-            $taskInstance->setConfigs($this->input, $this->output);
             $taskInstance->setParams($profileConfig);
+            $taskInstance->setIo($this->io);
             $taskInstance->run();
         }
     }

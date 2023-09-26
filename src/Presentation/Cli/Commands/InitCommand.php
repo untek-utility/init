@@ -74,7 +74,7 @@ class InitCommand extends Command
         $profileConfig = $profiles[$profile];
         $profileConfig['overwrite'] = $overwrite;
 
-        $initLib = new Init($input, $output, $profileConfig);
+        $initLib = new Init($this->getStyle(), $profileConfig);
 
         $output->writeln("\n  Start initialization ...\n\n");
         $initLib->run();
