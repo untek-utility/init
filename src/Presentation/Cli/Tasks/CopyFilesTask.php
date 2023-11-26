@@ -30,10 +30,12 @@ class CopyFilesTask extends BaseTask
             });
             $files = array_diff($files, array_intersect_key($skipFiles, array_filter($skipFiles, 'file_exists')));
         }
+
         foreach ($files as $file) {
-            if (!$this->copyFile($this->rootDir, "$sourcePath/$file", $file)) {
+            $this->copyFile($this->rootDir, "$sourcePath/$file", $file);
+            /*if (!$this->copyFile($this->rootDir, "$sourcePath/$file", $file)) {
                 break;
-            }
+            }*/
         }
     }
 
@@ -96,6 +98,5 @@ class CopyFilesTask extends BaseTask
         $this->io->write("   copy \"$target\"\n");
         @mkdir(dirname($rootDir . '/' . $target), 0777, true);
         file_put_contents($rootDir . '/' . $target, file_get_contents($source));
-        return;
     }
 }
