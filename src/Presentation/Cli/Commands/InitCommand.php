@@ -89,8 +89,9 @@ class InitCommand extends Command
 
     protected function findProfile(string $name, array $profiles): array
     {
+        $lowerName = mb_strtolower($name);
         foreach ($profiles as $profile) {
-            if ($profile['name'] == $name || $profile['title'] == $name) {
+            if (mb_strtolower($profile['name']) === $lowerName || mb_strtolower($profile['title']) === $lowerName) {
                 return $profile;
             }
         }
