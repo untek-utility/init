@@ -7,9 +7,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Untek\Core\Container\Traits\ContainerAwareAttributeTrait;
+use Untek\Core\Contract\Common\Exceptions\NotFoundException;
 use Untek\Core\Text\Libs\TemplateRender;
 use Untek\Framework\Console\Symfony4\Question\ChoiceQuestion;
+use Untek\Framework\Console\Symfony4\Style\SymfonyStyle;
 use Untek\Framework\Console\Symfony4\Traits\IOTrait;
 use Untek\Utility\Init\Presentation\Libs\Init;
 
@@ -53,6 +56,7 @@ class InitCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle();
         $output->writeln("Application Initialization Tool\n");
 
         $this->setInputOutput($input, $output);
@@ -65,22 +69,47 @@ class InitCommand extends Command
             ->addReplacement('ROOT_DIRECTORY', getenv('ROOT_DIRECTORY'))
             ->renderTemplate($configFile);
 
-        $profiles = require $configFile;
+        $profiles = $this->loadProfiles($configFile);
 
         if (empty($profile)) {
             $profile = $this->userInput($profiles);
         }
 
-        $profileConfig = $profiles[$profile];
+        $profileConfig = $this->findProfile($profile, $profiles);
         $profileConfig['overwrite'] = $overwrite;
 
         $initLib = new Init($this->getStyle(), $profileConfig);
 
-        $output->writeln("\n  Start initialization ...\n\n");
+        $io->writeln("\n  Start initialization ...\n\n");
         $initLib->run();
-        $output->writeln("\n  ... initialization completed.\n\n");
+        $io->success("Initialization completed.");
 
         return Command::SUCCESS;
+    }
+
+    protected function findProfile(string $name, array $profiles): array
+    {
+        foreach ($profiles as $profile) {
+            if ($profile['name'] == $name || $profile['title'] == $name) {
+                return $profile;
+            }
+        }
+        throw new NotFoundException('Profile "' . $name . '" not found.');
+    }
+
+    protected function loadProfiles(string $configFile): array
+    {
+        $profiles = require $configFile;
+        $newProfiles = [];
+        $slugger = new AsciiSlugger();
+        foreach ($profiles as $profile) {
+            if (empty($profile['title'])) {
+                throw new \Exception('Title of profile is empty.');
+            }
+            $profile['name'] = $slugger->slug($profile['title'])->lower()->toString();
+            $newProfiles[$profile['title']] = $profile;
+        }
+        return $newProfiles;
     }
 
     private function userInput($profiles)
