@@ -56,7 +56,7 @@ class InitCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle();
+        $io = new SymfonyStyle($input, $output);
         $output->writeln("Application Initialization Tool\n");
 
         $this->setInputOutput($input, $output);
