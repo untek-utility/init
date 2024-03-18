@@ -14,5 +14,6 @@ return static function (ContainerConfigurator $configurator): void {
             [
                 service(\Psr\Container\ContainerInterface::class)
             ]
-        );
+        )
+        ->tag('console.command');
 };
