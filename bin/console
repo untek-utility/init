@@ -13,10 +13,11 @@ $input = new ArgvInput();
 $mode = $input->getParameterOption('--mode', 'main');
 $projectDirectory = realpath(__DIR__ . '/../../../..');
 $appDirectory = realpath(__DIR__ . '/..');
+$envDirectory = realpath(__DIR__ . '/../config');
 $isTest = $mode == 'test';
 
 $context = 'console';
-(new DotEnvLoader($projectDirectory, $context, $isTest))->load();
+(new DotEnvLoader($projectDirectory, $context, $isTest, $envDirectory))->load();
 
 $env = getenv('APP_ENV');
 $isDebug = getenv('APP_DEBUG');
