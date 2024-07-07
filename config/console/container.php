@@ -3,6 +3,7 @@
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Untek\Framework\Console\Infrastructure\DependencyInjection\ConsoleCommandPass;
 
 /**
  * @var ContainerBuilder $containerBuilder
@@ -10,6 +11,8 @@ use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 $fileLocator = new FileLocator(__DIR__);
 $loader = new PhpFileLoader($containerBuilder, $fileLocator);
+
+$containerBuilder->addCompilerPass(new ConsoleCommandPass());
 
 // Console framework
 $loader->load(__DIR__ . '/../../../../../vendor/untek-framework/console/src/resources/config/services/main.php');
