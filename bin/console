@@ -1,49 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-use Untek\Core\App\Bootstrap\Kernel;
-use Symfony\Component\Console\Input\ArgvInput;
-use Untek\Core\App\Bootstrap\ConfigDirectory;
-use Untek\Core\App\Bootstrap\DotEnvLoader;
-use Untek\Framework\Console\Infrastructure\Cli\Server\CliKernel;
+use Untek\Framework\Console\Infrastructure\Cli\Server\CliApp;
 
 require __DIR__ . '/../../../autoload.php';
 
-$input = new ArgvInput();
-$mode = $input->getParameterOption('--mode', 'main');
 $projectDirectory = realpath(__DIR__ . '/../../../..');
-$appDirectory = realpath(__DIR__ . '/..');
+$configDir = realpath(__DIR__ . '/../config');
 $envDirectory = realpath(__DIR__ . '/../config');
-$isTest = $mode == 'test';
 
-$context = 'console';
-(new DotEnvLoader($projectDirectory, $context, $isTest, $envDirectory))->load();
-
-$env = getenv('APP_ENV');
-$isDebug = getenv('APP_DEBUG');
-$cacheDirectory = getenv('CACHE_DIRECTORY');
-$isImportLocalConfig = getenv('IMPORT_LOCAL_CONFIG');
-
-$configDirectory = new ConfigDirectory($appDirectory);
-$kernel = new Kernel(
-    $configDirectory,
-    $context,
-    $env,
-    $cacheDirectory,
-    $isImportLocalConfig,
-    $isDebug,
-    $isTest
-);
-
-$cliKernel = new CliKernel(
-    $kernel,
-    $context,
-    $env,
-    $cacheDirectory,
-    $isImportLocalConfig,
-    $isDebug,
-    $isTest
-);
-
-$application = $cliKernel->getApplication();
-$application->run($input);
+CliApp::run($projectDirectory, $configDir, $envDirectory);
